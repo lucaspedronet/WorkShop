@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 export default function App() {
@@ -12,14 +13,48 @@ export default function App() {
   const [members, setMembers] = useState<string[]>([]);
 
   function handleSubmit() {
+    if (name.length <= 0) {
+      return;
+    }
+
+    if (members.includes(name.trim())) {
+      return Alert.alert(
+        'Ateção',
+        'O participante: ' + name + ' já foi adicionado!',
+      );
+    }
+
     setMembers(parms => [name, ...parms]);
 
     setName('');
   }
 
+  function onMemberDestroi(memberDetroi: string) {
+    const newMembers = members.filter(m => m !== memberDetroi);
+
+    setMembers(newMembers);
+  }
+
+  function handleRemoveMember(member: string) {
+    Alert.alert('Remover', 'Remover o ' + member, [
+      {
+        text: 'Sim',
+        isPreferred: true,
+        onPress: () => {
+          onMemberDestroi(member);
+          console.log('removeu');
+        },
+      },
+      {
+        text: 'Não',
+        isPreferred: false,
+      },
+    ]);
+  }
+
   return (
     <View style={styled.container}>
-      <Text key={1} style={styled.title}>
+      <Text key={1} style={styled.titleEvent}>
         Nome do evento
       </Text>
       <Text key={2} style={styled.subTitle}>
@@ -40,15 +75,28 @@ export default function App() {
         </TouchableOpacity>
       </View>
 
-      {members.map((name, index) => {
-        console.log(name + index);
+      <Text key={3} style={styled.titleMembers}>
+        Nome do evento
+      </Text>
 
-        return (
-          <Text key={name + index} style={styled.subTitle}>
-            {name}
-          </Text>
-        );
-      })}
+      {members.length > 0 ? (
+        members.map((name, index) => (
+          <View key={name + index} style={styled.member}>
+            <Text style={styled.memberLabel}>{name}</Text>
+
+            <TouchableOpacity
+              style={styled.buttonRemove}
+              onPress={() => handleRemoveMember(name)}>
+              <Text style={styled.labelButton}>-</Text>
+            </TouchableOpacity>
+          </View>
+        ))
+      ) : (
+        <Text key={4} style={styled.paragraph}>
+          Ninguém chegou no evento ainda? Adicione participantes a sua lista de
+          presença.
+        </Text>
+      )}
     </View>
   );
 }
@@ -60,11 +108,26 @@ const styled = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 25,
   },
-  title: {
+  titleEvent: {
     color: '#FDFCFE',
     fontSize: 24,
     lineHeight: 28.13,
     fontWeight: '700',
+  },
+  titleMembers: {
+    color: '#FDFCFE',
+    fontSize: 20,
+    lineHeight: 23.44,
+    fontWeight: '700',
+    marginTop: 42,
+  },
+  paragraph: {
+    color: '#FDFCFE',
+    fontSize: 14,
+    lineHeight: 16.41,
+    fontWeight: '400',
+    marginTop: 42,
+    textAlign: 'center',
   },
   subTitle: {
     color: '#6B6B6B',
@@ -98,10 +161,34 @@ const styled = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#31CF67',
   },
+  buttonRemove: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 56,
+    height: 56,
+    borderRadius: 4,
+    backgroundColor: '#E23C44',
+  },
   labelButton: {
     color: '#fff',
     fontSize: 24,
     lineHeight: 24,
     fontWeight: '400',
+  },
+  member: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingStart: 16,
+    width: '100%',
+    height: 60,
+    marginTop: 16,
+    borderRadius: 4,
+    backgroundColor: '#1F1E25',
+  },
+  memberLabel: {
+    color: '#fff',
+    fontSize: 16,
+    lineHeight: 18.75,
   },
 });
