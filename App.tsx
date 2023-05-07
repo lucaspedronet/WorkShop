@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 
 export default function App() {
@@ -13,43 +12,16 @@ export default function App() {
   const [members, setMembers] = useState<string[]>([]);
 
   function handleSubmit() {
-    if (name.length <= 0) {
-      return;
-    }
-
-    if (members.includes(name.trim())) {
-      return Alert.alert(
-        'Ateção',
-        'O participante: ' + name + ' já foi adicionado!',
-      );
-    }
-
     setMembers(parms => [name, ...parms]);
 
     setName('');
   }
 
   function onMemberDestroi(memberDetroi: string) {
-    const newMembers = members.filter(m => m !== memberDetroi);
 
-    setMembers(newMembers);
   }
 
   function handleRemoveMember(member: string) {
-    Alert.alert('Remover', 'Remover o ' + member, [
-      {
-        text: 'Sim',
-        isPreferred: true,
-        onPress: () => {
-          onMemberDestroi(member);
-          console.log('removeu');
-        },
-      },
-      {
-        text: 'Não',
-        isPreferred: false,
-      },
-    ]);
   }
 
   return (
