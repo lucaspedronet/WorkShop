@@ -8,12 +8,15 @@ import {
   Alert,
 } from 'react-native';
 
+import {TitleEvent} from './src/components/TitleEvent';
+import {Member} from './src/components/Member';
+
 export default function App() {
-  const [name, setName] = useState('');
-  const [members, setMembers] = useState<string[]>([]);
+  const [name, setName] = useState<string>(''); // Nome do participantes
+  const [members, setMembers] = useState<string[]>([]); // Lista de participantes
 
   function handleSubmit() {
-    if (name.length <= 0) {
+    if (name.trim().length <= 0) {
       return;
     }
 
@@ -24,13 +27,13 @@ export default function App() {
       );
     }
 
-    setMembers(parms => [name, ...parms]);
+    setMembers(preState => [name, ...preState]);
 
     setName('');
   }
 
-  function onMemberDestroi(memberDetroi: string) {
-    const newMembers = members.filter(m => m !== memberDetroi);
+  function onMemberDestroi(member: string) {
+    const newMembers = members.filter(m => m !== member);
 
     setMembers(newMembers);
   }
@@ -54,13 +57,11 @@ export default function App() {
 
   return (
     <View style={styled.container}>
-      <Text key={1} style={styled.titleEvent}>
-        Nome do evento
-      </Text>
-      <Text key={2} style={styled.subTitle}>
-        Sexta, 4 de Novembro de 2022.
-      </Text>
-
+      <TitleEvent
+        key={12}
+        subTitle="Sexta, 4 de Junho de 2023."
+        title="Jogos interno IFTO"
+      />
       <View style={styled.containerInput}>
         <TextInput
           placeholder="Nome do participante"
@@ -81,15 +82,11 @@ export default function App() {
 
       {members.length > 0 ? (
         members.map((name, index) => (
-          <View key={name + index} style={styled.member}>
-            <Text style={styled.memberLabel}>{name}</Text>
-
-            <TouchableOpacity
-              style={styled.buttonRemove}
-              onPress={() => handleRemoveMember(name)}>
-              <Text style={styled.labelButton}>-</Text>
-            </TouchableOpacity>
-          </View>
+          <Member
+            id={name + index}
+            name={name}
+            onRemove={() => handleRemoveMember(name)}
+          />
         ))
       ) : (
         <Text key={4} style={styled.paragraph}>
@@ -108,12 +105,6 @@ const styled = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 25,
   },
-  titleEvent: {
-    color: '#FDFCFE',
-    fontSize: 24,
-    lineHeight: 28.13,
-    fontWeight: '700',
-  },
   titleMembers: {
     color: '#FDFCFE',
     fontSize: 20,
@@ -128,12 +119,6 @@ const styled = StyleSheet.create({
     fontWeight: '400',
     marginTop: 42,
     textAlign: 'center',
-  },
-  subTitle: {
-    color: '#6B6B6B',
-    lineHeight: 18.75,
-    fontSize: 16,
-    fontWeight: '400',
   },
   input: {
     flex: 1,
@@ -174,21 +159,5 @@ const styled = StyleSheet.create({
     fontSize: 24,
     lineHeight: 24,
     fontWeight: '400',
-  },
-  member: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingStart: 16,
-    width: '100%',
-    height: 60,
-    marginTop: 16,
-    borderRadius: 4,
-    backgroundColor: '#1F1E25',
-  },
-  memberLabel: {
-    color: '#fff',
-    fontSize: 16,
-    lineHeight: 18.75,
   },
 });
